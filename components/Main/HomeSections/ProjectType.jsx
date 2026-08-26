@@ -1,37 +1,44 @@
 "use client";
 
-import React, { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { FaArrowRightLong, FaArrowLeftLong } from "react-icons/fa6";
+import { fetchPageBySlug, getSection, mediaUrl } from '../../../utils/abcreativeApi';
 
-const projectSlides = [
-    {
-        id: 1,
-        title: "3D Design",
-        image: "/assets/img/slider1.png",
-        link: "/assets/img/slider1",
-    },
-    {
-        id: 2,
-        title: "How Stuff Works",
-        image: "/assets/img/slider2.png",
-        link: "/assets/img/slider2",
-    },
-    {
-        id: 3,
-        title: "3D Visualization",
-        image: "/assets/img/slider3.png",
-        link: "/assets/img/slider3",
-    },
-    {
-        id: 4,
-        title: "Interior Rendering",
-        image: "/assets/img/slider2.png",
-        link: "/assets/img/slider2",
-    },
+// Fallback content — used only while loading, or if the admin panel
+// section/items are empty, so the layout never looks broken.
+const fallbackSection = {
+
+};
+
+const fallbackSlides = [
+
 ];
 
 export default function ProjectType() {
     const scrollRef = useRef(null);
+
+    const [section, setSection] = useState(null);
+    const [items, setItems] = useState([]);
+
+    useEffect(() => {
+        const loadData = async () => {
+            const pageData = await fetchPageBySlug('home');
+            const projectTypeSection = getSection(pageData, 'project_type');
+
+            if (projectTypeSection) {
+                setSection(projectTypeSection);
+                setItems(projectTypeSection.items?.length ? projectTypeSection.items : []);
+            }
+        };
+        loadData();
+    }, []);
+
+    const tagLabel = section?.tag_label || fallbackSection.tag_label;
+    const title = section?.title || fallbackSection.title;
+    const description = section?.description || fallbackSection.description;
+    const buttonText = section?.button_text || fallbackSection.button_text;
+    const buttonLink = section?.button_link || fallbackSection.button_link;
+    const projectSlides = items.length ? items : fallbackSlides;
 
     const scroll = (direction) => {
         const container = scrollRef.current;
@@ -52,10 +59,12 @@ export default function ProjectType() {
                 <div className="container">
                     <div className="grid grid-cols-12 gap-6">
                         <div className="lg:col-span-4 col-span-12">
-                            <h6 className="uppercase font-medium text-[18px] leading-[100%] text-[var(--primary-color)] w-max relative after:content-[''] after:absolute after:w-[30px] after:h-[2px] after:bg-[var(--primary-color)] after:right-[-40px] after:top-[8px] mb-5">Visuals that works fast</h6>
-                            <h3 className="font-semibold lg:text-[55px] text-[23px] lg:leading-[100%] leading-[30px] text-white mb-5">Some Project Types</h3>
-                            <p className="text-[20px] text-white font-normal leading-[25px]">We turn ideas into visual reality. explore the wide range of projects we design, visualize, and bring to life</p>
-                            <button className="mt-[25px] flex items-center bg-[var(--primary-color)] hover:bg-black text-white px-7 py-4 rounded-lg transition border border-[var(--primary-color)] lg:text-[20px] text-[18px] font-medium leading-[100%]">Explore All Projects Types &nbsp; <FaArrowRightLong /></button>
+                            <h6 className="uppercase font-medium text-[18px] leading-[100%] text-[var(--primary-color)] w-max relative after:content-[''] after:absolute after:w-[30px] after:h-[2px] after:bg-[var(--primary-color)] after:right-[-40px] after:top-[8px] mb-5">{tagLabel}</h6>
+                            <h3 className="font-semibold lg:text-[55px] text-[23px] lg:leading-[100%] leading-[30px] text-white mb-5">{title}</h3>
+                            <p className="text-[20px] text-white font-normal leading-[25px]">{description}</p>
+                            <a href={buttonLink}>
+                                <button className="mt-[25px] flex items-center bg-[var(--primary-color)] hover:bg-black text-white px-7 py-4 rounded-lg transition border border-[var(--primary-color)] lg:text-[20px] text-[18px] font-medium leading-[100%]">{buttonText} &nbsp; <FaArrowRightLong /></button>
+                            </a>
                         </div>
 
                         {/* Here is slider column */}
@@ -71,7 +80,7 @@ export default function ProjectType() {
                                         data-card
                                         className="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
                                     >
-                                        <SliderCard item={item} />
+                                        <SliderCard item={item} isDynamic={items.length > 0} />
                                     </div>
                                 ))}
                             </div>
@@ -102,14 +111,17 @@ export default function ProjectType() {
     )
 }
 
-function SliderCard({ item }) {
+function SliderCard({ item, isDynamic }) {
+    const imageSrc = isDynamic ? mediaUrl(item.image) : item.image;
+    const linkHref = item.link || "#";
+
     return (
-        
-        <a href={item.link}
+
+        <a href={linkHref}
             className="group relative block h-[380px] rounded-2xl overflow-hidden ring-1 ring-white/10"
         >
             <img
-                src={item.image}
+                src={imageSrc}
                 alt={item.title}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />

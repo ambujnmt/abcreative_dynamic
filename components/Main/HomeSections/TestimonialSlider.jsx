@@ -2,47 +2,43 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { FaStar } from "react-icons/fa"
 import { HiArrowLeft, HiArrowRight } from "react-icons/hi2"
+import { fetchTestimonials, mediaUrl } from '../../../utils/abcreativeApi'
 
-const testimonials = [
+// Fallback content — used only while loading, or if the admin panel
+// has no testimonials added yet, so the slider never looks empty/broken.
+const fallbackTestimonials = [
+
     {
-        id: 1,
-        name: "Sammy",
-        rating: 5,
-        review: "Great experience working with ABCreative. The quality of work was excellent and delivered right on time.",
-        avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-    },
-    {
-        id: 2,
-        name: "Brock",
-        rating: 5,
-        review: "Great experience working with ABCreative. The quality of work was excellent and delivered right on time.",
-        avatar: "https://randomuser.me/api/portraits/men/45.jpg",
-    },
-    {
-        id: 3,
-        name: "Sammy",
-        rating: 5,
-        review: "Great experience working with ABCreative. The quality of work was excellent and delivered right on time.",
-        avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-    },
-    {
-        id: 4,
-        name: "Sammy",
-        rating: 5,
-        review: "Great experience working with ABCreative. The quality of work was excellent and delivered right on time.",
-        avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-    },
-    {
-        id: 5,
-        name: "Brock",
-        rating: 5,
-        review: "Great experience working with ABCreative. The quality of work was excellent and delivered right on time.",
-        avatar: "https://randomuser.me/api/portraits/men/45.jpg",
+      
     },
 ]
 
 export default function TestimonialSlider() {
-    // Clone last and first slides for infinite loop illusion
+    const [testimonials, setTestimonials] = useState(fallbackTestimonials)
+    const [isDynamic, setIsDynamic] = useState(false)
+
+    // Fetch testimonials from the admin panel API on mount.
+    useEffect(() => {
+        const loadTestimonials = async () => {
+            const data = await fetchTestimonials()
+
+            if (data.length) {
+                const mapped = data.map((t) => ({
+                    id: t.id,
+                    name: t.name,
+                    rating: t.rating || 5,
+                    review: t.description,
+                    avatar: mediaUrl(t.image),
+                }))
+                setTestimonials(mapped)
+                setIsDynamic(true)
+            }
+        }
+        loadTestimonials()
+    }, [])
+
+    // Clone last and first slides for infinite loop illusion.
+    // Recomputed whenever the testimonials list changes (e.g. after the API loads).
     const slides = [
         testimonials[testimonials.length - 1],
         ...testimonials,
@@ -53,6 +49,13 @@ export default function TestimonialSlider() {
     const [withTransition, setWithTransition] = useState(true)
     const [slidesToShow, setSlidesToShow] = useState(3)
     const trackRef = useRef(null)
+
+    // Reset to the first real slide whenever the testimonials data changes
+    // (e.g. fallback data gets replaced by real API data).
+    useEffect(() => {
+        setWithTransition(false)
+        setCurrent(1)
+    }, [isDynamic])
 
     // Responsive slides count (like Owl Carousel responsive breakpoints)
     useEffect(() => {

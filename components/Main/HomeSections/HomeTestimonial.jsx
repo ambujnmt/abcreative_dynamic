@@ -20,7 +20,7 @@ export default function HomeTestimonial() {
                         {/* // Testimonial will come here */}
 
                     </div>
-                </div>
+                </div> 
             </section>
         </>
     )
