@@ -23,7 +23,7 @@ export default function FaqCom() {
                                     alt="image"
                                     className="w-full h-[600px] rounded-xl object-cover"
                                 />
-                            </div>
+                            </div>    
                             <div className="col-span-12 lg:col-span-6">
                                 <div className=""> 
                                     {/* Q1 */}
