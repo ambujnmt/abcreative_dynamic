@@ -41,7 +41,7 @@ export default function Hero() {
   }, []);
 
   // Helper to build a full public storage URL from a stored relative path
-  const mediaUrl = (path) => (path ? `${API_URL}/storage/${path}` : null);
+  const mediaUrl = (path) => (path ? `${API_URL}/public/uploads/${path}` : null);
 
   // Fallback content shown while loading or if a field is empty,
   // so the layout never looks broken.
