@@ -1,27 +1,43 @@
 import { Link } from "@heroui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaBars, FaTimes, FaChevronDown } from "react-icons/fa";
- 
+import { fetchSettings, mediaUrl } from '../../utils/abcreativeApi';
+
+// Fallback logo — used only while loading, or if no logo has been
+// uploaded in Site Settings yet, so the header never looks broken.
+const fallbackLogo = "/assets/img/logo.png";
+
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
- 
+  const [logo, setLogo] = useState(fallbackLogo);
+  const [siteName, setSiteName] = useState("ABCreative");
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      const data = await fetchSettings();
+      if (data?.logo) setLogo(mediaUrl(data.logo));
+      if (data?.site_name) setSiteName(data.site_name);
+    };
+    loadSettings();
+  }, []);
+
   return (
     <header className="absolute top-0 z-[9999] w-full">
       <div className="">
         <div className="container mx-auto">
           <div className="flex items-center justify-between pt-2">
- 
+
             {/* Logo */}
             <div className="flex items-center min-w-[185px]">
               <Link href="/">
                 <img
-                  src="/assets/img/logo.png"
-                  alt="Logo"
+                  src={logo}
+                  alt={siteName}
                   className="h-auto lg:max-w-[300px] max-w-[195px]"
                 />
               </Link>
             </div>
- 
+
             {/* Desktop Menu */}
             <div className="hidden xl:flex items-center">
               <nav>
@@ -34,16 +50,16 @@ export default function Header() {
                       Home
                     </Link>
                   </li>
- 
+
                   <li className="mx-[20px] relative group">
                     <Link
                       href="/company"
                       className="text-[20px] leading-[100%] font-medium hover:text-[var(--primary-color)] text-[#fff]"
                     >
-                      Company 
+                      Company
                     </Link>
                   </li>
- 
+
                   <li className="mx-[20px]">
                     <Link
                       href="/whatWeDo"
@@ -51,15 +67,15 @@ export default function Header() {
                       What we do
                     </Link>
                   </li>
- 
+
                   <li className="mx-[20px]">
                     <Link
                       href="clients"
                       className="text-[20px] leading-[100%] font-medium hover:text-[var(--primary-color)] text-[#fff]">
                       Clients
                     </Link>
-                  </li> 
- 
+                  </li>
+
                   <li className="ml-5">
                     <Link
                       href="/contactUs"
@@ -71,7 +87,7 @@ export default function Header() {
                 </ul>
               </nav>
             </div>
- 
+
             {/* Mobile Toggle */}
             <div className="xl:hidden">
               <button
@@ -84,7 +100,7 @@ export default function Header() {
           </div>
         </div>
       </div>
- 
+
       {/* Mobile Menu */}
       {isOpen && (
         <div className="xl:hidden bg-white shadow-lg">
@@ -109,4 +125,3 @@ export default function Header() {
     </header>
   );
 }
- 

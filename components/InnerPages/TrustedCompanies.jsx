@@ -6,22 +6,11 @@ import { fetchPageBySlug, getSection, fetchClients, mediaUrl } from '../../utils
 // Fallback content — used only while loading, or if the admin panel
 // section/clients are empty, so the layout never looks broken.
 const fallbackSection = {
-    title: "ABCreative services trusted by teams at companies including...",
-    button_text: "See Cases",
-    button_link: "#",
+
 };
 
 const fallbackClients = [
-    { id: 1, logo: "/assets/img/com-logo1.png", name: "Client 1" },
-    { id: 2, logo: "/assets/img/com-logo2.png", name: "Client 2" },
-    { id: 3, logo: "/assets/img/com-logo3.png", name: "Client 3" },
-    { id: 4, logo: "/assets/img/com-logo4.png", name: "Client 4" },
-    { id: 5, logo: "/assets/img/com-logo5.png", name: "Client 5" },
-    { id: 6, logo: "/assets/img/com-logo6.png", name: "Client 6" },
-    { id: 7, logo: "/assets/img/com-logo7.png", name: "Client 7" },
-    { id: 8, logo: "/assets/img/com-logo8.png", name: "Client 8" },
-    { id: 9, logo: "/assets/img/com-logo9.png", name: "Client 9" },
-    { id: 10, logo: "/assets/img/com-logo10.png", name: "Client 10" },
+
 ];
 
 export default function TrustedCompanies() {
