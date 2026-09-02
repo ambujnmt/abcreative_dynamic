@@ -12,7 +12,7 @@ import { fetchPageBySlug } from '../../utils/abcreativeApi';
 // Fallback content — used only while loading, or if the admin panel
 // page is empty, so the layout never looks broken.
 const fallbackPage = {
-    banner_title: "Faq",
+    
 };
 
 export default function Faq() {
