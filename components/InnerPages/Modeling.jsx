@@ -1,14 +1,134 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IoIosArrowForward } from "react-icons/io";
 import { FaCube, FaCog, FaRegComments } from "react-icons/fa";
 import { Link } from "@heroui/react";
 import { FaArrowRightLong } from "react-icons/fa6";
 import TrustedCompanies from "./TrustedCompanies";
+import { fetchPageBySlug, getSection, mediaUrl } from '../../utils/abcreativeApi';
+
+// Fallback content — used only while loading, or if the admin panel
+// page/sections are empty, so the layout never looks broken.
+const fallbackPage = {
+};
+
+const fallbackIntro = {
+};
+
+// Each item's description supports inline HTML (an <a> link mid-sentence),
+// typed directly in the admin panel's paragraph field.
+const fallbackIntroPoints = [
+];
+
+const fallbackRecentClients = [
+];
+
+const fallbackContactCard = {
+};
+
+const fallbackWhy = {
+};
+
+const fallbackWhyChecklist = [
+];
+
+const fallbackWorkflow = {
+};
+
+// Each step's "title" is the bold lead-in text (optional), "description"
+// is the rest of the sentence.
+const fallbackWorkflowSteps = [
+   
+];
+
+const fallbackNeeds = {
+};
+
+const fallbackNeedsCards = [
+];
 
 export default function Modeling() {
+
+    const [page, setPage] = useState(null);
+    const [introSection, setIntroSection] = useState(null);
+    const [introPoints, setIntroPoints] = useState([]);
+    const [recentClients, setRecentClients] = useState([]);
+    const [contactCard, setContactCard] = useState(null);
+    const [whySection, setWhySection] = useState(null);
+    const [whyChecklist, setWhyChecklist] = useState([]);
+    const [workflowSection, setWorkflowSection] = useState(null);
+    const [workflowSteps, setWorkflowSteps] = useState([]);
+    const [needsSection, setNeedsSection] = useState(null);
+    const [needsCards, setNeedsCards] = useState([]);
+
+    useEffect(() => {
+        const loadData = async () => {
+            const pageData = await fetchPageBySlug('modeling');
+            if (!pageData) return;
+            setPage(pageData);
+
+            const intro = getSection(pageData, 'modeling_intro');
+            if (intro) {
+                setIntroSection(intro);
+                setIntroPoints(intro.items?.length ? intro.items : []);
+            }
+
+            const recent = getSection(pageData, 'modeling_recent_clients');
+            if (recent) setRecentClients(recent.items?.length ? recent.items : []);
+
+            const contact = getSection(pageData, 'modeling_contact_card');
+            if (contact) setContactCard(contact);
+
+            const why = getSection(pageData, 'modeling_why');
+            if (why) {
+                setWhySection(why);
+                setWhyChecklist(why.items?.length ? why.items : []);
+            }
+
+            const workflow = getSection(pageData, 'modeling_workflow');
+            if (workflow) {
+                setWorkflowSection(workflow);
+                setWorkflowSteps(workflow.items?.length ? workflow.items : []);
+            }
+
+            const needs = getSection(pageData, 'modeling_needs');
+            if (needs) {
+                setNeedsSection(needs);
+                setNeedsCards(needs.items?.length ? needs.items : []);
+            }
+        };
+        loadData();
+    }, []);
+
+    const bannerTitle = page?.banner_title || fallbackPage.banner_title;
+    const bannerSubtitle = page?.banner_subtitle || fallbackPage.banner_subtitle;
+
+    const introTag = introSection?.tag_label || fallbackIntro.tag_label;
+    const introTitle = introSection?.title || fallbackIntro.title;
+    const points = introPoints.length ? introPoints : fallbackIntroPoints;
+
+    const clients = recentClients.length ? recentClients : fallbackRecentClients;
+
+    const cardTitle = contactCard?.title || fallbackContactCard.title;
+    const cardDescription = contactCard?.description || fallbackContactCard.description;
+    const cardButtonText = contactCard?.button_text || fallbackContactCard.button_text;
+
+    const whyTag = whySection?.tag_label || fallbackWhy.tag_label;
+    const whyTitle = whySection?.title || fallbackWhy.title;
+    const whyDescription = whySection?.description || fallbackWhy.description;
+    const checklist = whyChecklist.length ? whyChecklist : fallbackWhyChecklist;
+
+    const workflowTag = workflowSection?.tag_label || fallbackWorkflow.tag_label;
+    const workflowTitle = workflowSection?.title || fallbackWorkflow.title;
+    const workflowDescription = workflowSection?.description || fallbackWorkflow.description;
+    const steps = workflowSteps.length ? workflowSteps : fallbackWorkflowSteps;
+
+    const needsTitle = needsSection?.title || fallbackNeeds.title;
+    const needCards = needsCards.length ? needsCards : fallbackNeedsCards;
+    const isDynamicNeeds = needsCards.length > 0;
+
     return (
         <>
-            {/* Breadcrumb section - Original */}
+            {/* Breadcrumb section */}
             <div className="relative w-full h-[400px] flex items-center justify-center overflow-hidden">
                 <img
                     src="/assets/img/breadcrumb-img.png"
@@ -20,15 +140,15 @@ export default function Modeling() {
 
                 <div className="relative z-10 text-center pt-[30px]">
                     <h1 className="text-4xl font-bold text-white mb-3">
-                        Modeling
+                        {bannerTitle}
                     </h1>
-                    <p className="text-white max-w-2xl pb-5 text-[18px]">Use our business-to-business 3D modeling service to achieve an accurate visual model of your project.</p>
+                    <p className="text-white max-w-2xl mx-auto pb-5 text-[18px]">{bannerSubtitle}</p>
 
                     <div className="flex items-center justify-center gap-2 text-white text-[16px] font-medium">
                         <Link href="/" className="text-white">Home</Link>
                         <IoIosArrowForward size={16} />
                         <span className="text-[var(--primary-color)]">
-                            Modeling
+                            {bannerTitle}
                         </span>
                     </div>
                 </div>
@@ -44,81 +164,29 @@ export default function Modeling() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12">
 
                         {/* Left Content */}
-                        <div className="lg:col-span-8"> 
+                        <div className="lg:col-span-8">
                             <div className="flex items-center gap-4">
-                                <h6 className="uppercase font-medium text-[18px] leading-[100%] text-[var(--primary-color)] w-max relative after:content-[''] after:absolute after:w-[30px] after:h-[2px] after:bg-[var(--primary-color)] after:right-[-40px] after:top-[8px] mb-3">Modeling</h6>
+                                <h6 className="uppercase font-medium text-[18px] leading-[100%] text-[var(--primary-color)] w-max relative after:content-[''] after:absolute after:w-[30px] after:h-[2px] after:bg-[var(--primary-color)] after:right-[-40px] after:top-[8px] mb-3">{introTag}</h6>
                             </div>
-                            <h3 className="font-semibold lg:text-[40px] text-[23px] lg:leading-[100%] leading-[30px] text-[var(--text-color1)] mb-5"> Modeling in Our Projects </h3> 
+                            <h3 className="font-semibold lg:text-[40px] text-[23px] lg:leading-[100%] leading-[30px] text-[var(--text-color1)] mb-5"> {introTitle} </h3>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-5 text-[16px] text-[var(--text-color1)] font-normal leading-[25px]">
-                                <p>
-                                    Do you want to see how our{" "}
-                                    <Link href="#" className="text-[var(--primary-color)] underline">
-                                        3D design
-                                    </Link>{" "}
-                                    service can get your idea off the ground?
-                                </p>
-
-                                <p>
-                                    Do you need to convert{" "}
-                                    <Link href="#" className="text-[var(--primary-color)] underline">
-                                        2D CAD into 3D
-                                    </Link>{" "}
-                                    models for animation or visuals?
-                                </p>
-
-                                <p>
-                                    Do you require a{" "}
-                                    <Link href="#" className="text-[var(--primary-color)] underline">
-                                        3D infographic design
-                                    </Link>{" "}
-                                    as part of a marketing mix?
-                                </p>
-
-                                <p>
-                                    See how our{" "}
-                                    <Link href="#" className="text-[var(--primary-color)] underline">
-                                        snowpark visualization
-                                    </Link>{" "}
-                                    entices financiers and promotes interest in indoor leisure projects.
-                                </p>
-
-                                <p>
-                                    Let our{" "}
-                                    <Link href="#" className="text-[var(--primary-color)] underline">
-                                        themed environment design
-                                    </Link>{" "}
-                                    service visualize your craziest dreams!
-                                </p>
-
-                                <p>
-                                    Why not have 3D{" "}
-                                    <Link href="#" className="text-[var(--primary-color)] underline">
-                                        product visualization 
-                                    </Link>{" "}
-                                    made to give quality 3D marketing visuals?
-                                </p> 
+                                {points.map((point) => (
+                                    <p key={point.id} dangerouslySetInnerHTML={{ __html: point.description }} />
+                                ))}
                             </div>
 
                             {/* Recent Clients */}
                             <div className="mt-16">
-                                <h3 className="font-semibold lg:text-[40px] text-[23px] lg:leading-[100%] leading-[30px] text-[var(--text-color1)] mb-5"> Recent clients </h3>  
+                                <h3 className="font-semibold lg:text-[40px] text-[23px] lg:leading-[100%] leading-[30px] text-[var(--text-color1)] mb-5"> Recent clients </h3>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <Link href="#" className="group flex items-center gap-3 text-[var(--primary-color)]">
-                                        <span className="w-2 h-2 rounded-full bg-[var(--primary-color)] group-hover:scale-150 transition"></span>
-                                        RTG crane for Siemens.
-                                    </Link>
-
-                                    <Link href="#" className="group flex items-center gap-3 text-[var(--primary-color)]">
-                                        <span className="w-2 h-2 rounded-full bg-[var(--primary-color)] group-hover:scale-150 transition"></span>
-                                        Kaifeng Snow Dome for Unlimited Snow BV.
-                                    </Link>
-
-                                    <Link href="#" className="group flex items-center gap-3 text-[var(--primary-color)]">
-                                        <span className="w-2 h-2 rounded-full bg-[var(--primary-color)] group-hover:scale-150 transition"></span>
-                                        3D visualization for Esra.
-                                    </Link>
+                                    {clients.map((client) => (
+                                        <Link href={client.link || "#"} className="group flex items-center gap-3 text-[var(--primary-color)]" key={client.id}>
+                                            <span className="w-2 h-2 rounded-full bg-[var(--primary-color)] group-hover:scale-150 transition"></span>
+                                            {client.title}
+                                        </Link>
+                                    ))}
                                 </div>
                             </div>
                         </div>
@@ -136,19 +204,18 @@ export default function Modeling() {
                                         </div>
 
                                         <h3 className="text-2xl font-bold leading-tight mb-5">
-                                            Let’s talk about 3D design
+                                            {cardTitle}
                                         </h3>
 
                                         <p className="text-white/70 font-normal leading-[25px] text-[16px]">
-                                            We are unique in that this is what we can help you
-                                            with your project!
+                                            {cardDescription}
                                         </p>
 
                                         <div className="mt-8 h-px bg-white/15"></div>
 
                                         <div className="mt-6 flex items-center justify-between">
                                             <span className="text-sm text-white/60">
-                                                Modeling project
+                                                {cardButtonText}
                                             </span>
 
                                             <IoIosArrowForward className="text-[#35b3c3]" size={22} />
@@ -161,7 +228,7 @@ export default function Modeling() {
                 </section>
 
 
-                {/* Why Animation Section */}
+                {/* Why Modeling Section */}
                 <section className="relative bg-[url('/assets/img/bg1.jpg')] bg-cover bg-center bg-fixed text-white">
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-black/80"></div>
@@ -172,39 +239,26 @@ export default function Modeling() {
 
                             <div className="lg:col-span-4">
                                 <span className="text-[var(--primary-color)] text-sm font-bold uppercase tracking-[0.2em]">
-                                    01
+                                    {whyTag}
                                 </span>
 
                                 <h3 className="font-semibold lg:text-[40px] text-[23px] lg:leading-[100%] leading-[30px] mb-5">
-                                    Why Modeling?
+                                    {whyTitle}
                                 </h3>
                             </div>
 
                             <div className="lg:col-span-8">
                                 <p className="text-white/90 text-[16px] font-normal leading-[25px]">
-                                    If you let ABCreative assist in your project development with our 3D modeling service, we will transform your 2D design concepts into realistic 3D production models ready for 3D design visualization and 3D animation. From these models, we will make you photorealistic 3D visualization even while your project team is still in the project development phase. Our 3D models will be as detailed as they need to be, full-size scale, and made according to the reference material you supply.
+                                    {whyDescription}
                                 </p>
 
                                 <ul className="mt-7 grid grid-cols-1 sm:grid-cols-2 gap-4 text-white/90 text-[16px] font-normal leading-[25px]">
-                                    <li className="flex gap-3">
-                                        <span className="text-[var(--primary-color)]">✓</span>
-                                        See what the object is about from all sides
-                                    </li>
-
-                                    <li className="flex gap-3">
-                                        <span className="text-[var(--primary-color)]">✓</span>
-                                        Gain a more precise understanding or perspective.
-                                    </li>
-
-                                    <li className="flex gap-3">
-                                        <span className="text-[var(--primary-color)]">✓</span>
-                                        Play around with different ideas.
-                                    </li>
-
-                                    <li className="flex gap-3">
-                                        <span className="text-[var(--primary-color)]">✓</span>
-                                        Accelerate the process of product design development.
-                                    </li>
+                                    {checklist.map((item) => (
+                                        <li className="flex gap-3" key={item.id}>
+                                            <span className="text-[var(--primary-color)]">✓</span>
+                                            {item.title}
+                                        </li>
+                                    ))}
                                 </ul>
                             </div>
 
@@ -219,179 +273,74 @@ export default function Modeling() {
 
                         <div className="lg:col-span-4">
                             <span className="text-[#35aeba] text-sm font-bold uppercase tracking-[0.2em]">
-                                02
+                                {workflowTag}
                             </span>
-                            <h3 className="font-semibold lg:text-[40px] text-[23px] lg:leading-[100%] leading-[30px] mb-5 text-[var(--text-color1)]"> Workflow </h3>
+                            <h3 className="font-semibold lg:text-[40px] text-[23px] lg:leading-[100%] leading-[30px] mb-5 text-[var(--text-color1)]"> {workflowTitle} </h3>
 
                             <div className="hidden lg:block mt-8 w-24 h-1 bg-[#35b3c3]"></div>
                         </div>
 
                         <div className="lg:col-span-8">
                             <p className="text-[16px] text-[var(--text-color1)] font-normal leading-[25px]">
-                                Huge environmental scenes or microscopic particles can all be modeled in 3D by a similar step-by-step process. Another example would be industrial machines, which are notoriously complex and challenging to explain. Often the client has a 3D design model from the design and manufacturing process, which we can use to create a photorealistic model leading to 3D renders.
+                                {workflowDescription}
                             </p>
 
                             <div className="relative mt-10 pl-8 border-l-2 border-[#b9dce1]">
                                 <div className="space-y-6 text-[16px] text-[var(--text-color1)] font-normal leading-[25px]">
-
-                                    <div className="relative">
-                                        <span className="absolute -left-[43px] top-2 w-5 h-5 rounded-full bg-[#35b3c3] border-4 border-[#f6f9fa]"></span>
-                                        <p>
-                                            <span className="font-bold text-[#172031]">
-                                                Youshare your project purpose,
-                                            </span>{" "}
-                                            expectations & deadlines.
-                                        </p>
-                                    </div>
-
-                                    <div className="relative">
-                                        <span className="absolute -left-[43px] top-2 w-5 h-5 rounded-full bg-[#35b3c3] border-4 border-[#f6f9fa]"></span>
-                                        <p>Both you and we get our questions answered.</p>
-                                    </div>
-
-                                    <div className="relative">
-                                        <span className="absolute -left-[43px] top-2 w-5 h-5 rounded-full bg-[#35b3c3] border-4 border-[#f6f9fa]"></span>
-                                        <p>We give a price indication.</p>
-                                    </div>
-
-                                    <div className="relative">
-                                        <span className="absolute -left-[43px] top-2 w-5 h-5 rounded-full bg-[#35b3c3] border-4 border-[#f6f9fa]"></span>
-                                        <p>For long projects, we ask for payment in stages.</p>
-                                    </div>
-
-                                    <div className="relative">
-                                        <span className="absolute -left-[43px] top-2 w-5 h-5 rounded-full bg-[#35b3c3] border-4 border-[#f6f9fa]"></span>
-                                        <p>On the price agreement, you provide us with project data.</p>
-                                    </div>
-
-                                    <div className="relative">
-                                        <span className="absolute -left-[43px] top-2 w-5 h-5 rounded-full bg-[#35b3c3] border-4 border-[#f6f9fa]"></span>
-                                        <p>
-                                            <span className="font-bold text-[#172031]">
-                                                We start work
-                                            </span>{" "}
-                                            following the best workflow for the project.
-                                        </p>
-                                    </div>
-
-                                    <div className="relative">
-                                        <span className="absolute -left-[43px] top-2 w-5 h-5 rounded-full bg-[#35b3c3] border-4 border-[#f6f9fa]"></span>
-                                        <p>
-                                            <span className="font-bold text-[#172031]">
-                                                We provide regular updates
-                                            </span>{" "}
-                                            using email, calls, or meetings.
-                                        </p>
-                                    </div>
-
-                                    <div className="relative">
-                                        <span className="absolute -left-[43px] top-2 w-5 h-5 rounded-full bg-[#35b3c3] border-4 border-[#f6f9fa]"></span>
-                                        <p>We provide preview visuals via email or Vimeo for animation.</p>
-                                    </div>
-
-                                    <div className="relative">
-                                        <span className="absolute -left-[43px] top-2 w-5 h-5 rounded-full bg-[#35b3c3] border-4 border-[#f6f9fa]"></span>
-                                        <p>Your comments lead to changes professionally handled.</p>
-                                    </div>
-
-                                    <div className="relative">
-                                        <span className="absolute -left-[43px] top-2 w-5 h-5 rounded-full bg-[#35b3c3] border-4 border-[#f6f9fa]"></span>
-                                        <p>Several preview phases pass before handing over a final product.</p>
-                                    </div>
-
-                                    <div className="relative">
-                                        <span className="absolute -left-[43px] top-2 w-5 h-5 rounded-full bg-[#35b3c3] border-4 border-[#f6f9fa]"></span>
-                                        <p>Post-production with voice-over and subtitles, are options.</p>
-                                    </div>
-
-                                    <div className="relative">
-                                        <span className="absolute -left-[43px] top-2 w-5 h-5 rounded-full bg-[#35b3c3] border-4 border-[#f6f9fa]"></span>
-                                        <p>
-                                            <span className="font-bold text-[#172031]">
-                                                We deliver final versions.
-                                            </span>
-                                        </p>
-                                    </div>
+                                    {steps.map((step) => (
+                                        <div className="relative" key={step.id}>
+                                            <span className="absolute -left-[43px] top-2 w-5 h-5 rounded-full bg-[#35b3c3] border-4 border-[#f6f9fa]"></span>
+                                            <p>
+                                                {step.title && (
+                                                    <span className="font-bold text-[#172031]">
+                                                        {step.title}{" "}
+                                                    </span>
+                                                )}
+                                                {step.description}
+                                            </p>
+                                        </div>
+                                    ))}
                                 </div>
-                            </div> 
+                            </div>
                         </div>
                     </div>
                 </section>
 
 
-                {/* Animation Services */}
+                {/* Your Modeling May Need */}
                 <section className="bg-[#eef7f8] py-14">
                     <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
                         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-10">
-                            <h3 className="font-semibold lg:text-[40px] text-[23px] lg:leading-[100%] leading-[30px] mb-5 text-[var(--text-color1)]"> Your Modeling May Need </h3>
+                            <h3 className="font-semibold lg:text-[40px] text-[23px] lg:leading-[100%] leading-[30px] mb-5 text-[var(--text-color1)]"> {needsTitle} </h3>
                         </div>
 
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            {needCards.map((card) => {
+                                const imageSrc = isDynamicNeeds ? mediaUrl(card.image) : card.image;
 
-                            <div className="group relative min-h-[360px] rounded-[28px] overflow-hidden bg-[#102536]">
-                                <Link href="/animation">
-                                    <img
-                                        src="/assets/img/Animation.jpg"
-                                        alt="Animation"
-                                        className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-110 transition duration-700"
-                                    />
+                                return (
+                                    <div className="group relative min-h-[360px] rounded-[28px] overflow-hidden bg-[#102536]" key={card.id}>
+                                        <Link href={card.link || "#"}>
+                                            <img
+                                                src={imageSrc}
+                                                alt={card.title}
+                                                className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-110 transition duration-700"
+                                            />
 
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#102536] via-[#102536]/30 to-transparent"></div>
+                                            <div className="absolute inset-0 bg-gradient-to-t from-[#102536] via-[#102536]/30 to-transparent"></div>
 
-                                    <div className="relative z-10 h-full min-h-[360px] flex flex-col justify-end p-7 text-white"> 
-                                        <h3 className="font-semibold text-[30px] mb-3">
-                                            Animation
-                                        </h3> 
-                                        <p className="text-sm leading-7 text-white/80 font-normal">
-                                            Animation Showcase your latest development, product, or services with our 3D animation service.
-                                        </p>
+                                            <div className="relative z-10 h-full min-h-[360px] flex flex-col justify-end p-7 text-white">
+                                                <h3 className="font-semibold text-[30px] mb-3">
+                                                    {card.title}
+                                                </h3>
+                                                <p className="text-sm leading-7 text-white/80 font-normal">
+                                                    {card.description}
+                                                </p>
+                                            </div>
+                                        </Link>
                                     </div>
-                                </Link>
-                            </div>
-
-                            <div className="group relative min-h-[360px] rounded-[28px] overflow-hidden bg-[#102536]">
-                                <Link href="/rendering">
-                                    <img
-                                        src="/assets/img/Rendering.jpg"
-                                        alt="Rendering"
-                                        className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-110 transition duration-700"
-                                    />
-
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#102536] via-[#102536]/30 to-transparent"></div>
-
-                                    <div className="relative z-10 h-full min-h-[360px] flex flex-col justify-end p-7 text-white"> 
-                                        <h3 className="font-semibold text-[30px] mb-3">
-                                            Rendering
-                                        </h3> 
-                                        <p className="text-sm leading-7 text-white/80 font-normal">
-                                            3D images produced by our 3D rendering service help you
-                                            market your ideas with style.
-                                        </p>
-                                    </div>
-                                </Link>
-                            </div>
-
-                            <div className="group relative min-h-[360px] rounded-[28px] overflow-hidden bg-[#102536]">
-                                <Link href="/visualization">
-                                    <img
-                                        src="/assets/img/Visualization.jpg"
-                                        alt="Visualization"
-                                        className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-110 transition duration-700"
-                                    />
-
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#102536] via-[#102536]/30 to-transparent"></div>
-
-                                    <div className="relative z-10 h-full min-h-[360px] flex flex-col justify-end p-7 text-white">  
-                                        <h3 className="font-semibold text-[30px] mb-3">
-                                            Visualization
-                                        </h3> 
-                                        <p className="text-sm leading-7 text-white/80 font-normal">
-                                            3D visualizations are computer-generated images that create
-                                            the illusion of three-dimensional space.
-                                        </p>
-                                    </div>
-                                </Link>
-                            </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </section>
