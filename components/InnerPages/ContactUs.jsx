@@ -11,24 +11,17 @@ import { fetchPageBySlug, getSection, fetchSettings, submitContactForm } from '.
 // Fallback content — used only while loading, or if the admin panel
 // page/section/settings are empty, so the layout never looks broken.
 const fallbackPage = {
-    banner_title: "Contact Us",
 };
 
 const fallbackIntro = {
-    title: "Let's talk",
-    description: "To request a quote or want to meet up for coffee, contact us directly or fill out the form and we will get back to you promptly.",
-};
+ };
 
 const fallbackSettings = {
-    address: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-    phone: "+1 (203) 123456789",
-    email: "contactus@abcreative.com",
+  
 };
 
 const initialFormState = {
-    name: "",
-    email: "",
-    message: "",
+  
 };
 
 export default function ContactUs() {
