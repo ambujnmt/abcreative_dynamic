@@ -5,7 +5,7 @@ import React from 'react';
 // 👉 Adjust these 3 paths to wherever Header, Footer and HomeForm live in your project.
 import Header from '../components/Layout/Header';
 import Footer from '../components/Layout/Footer';
-import HomeForm from '../components/Home/HomeSections/HomeForm';
+import HomeForm from '../components/Main/HomeSections/HomeForm';
 
 import ServiceHero from '../components/ServiceDetail/ServiceHero';
 import ServiceVideoStrip from '../components/ServiceDetail/ServiceVideoStrip';
