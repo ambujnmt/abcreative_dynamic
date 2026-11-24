@@ -5,7 +5,7 @@ import { fetchSettings, mediaUrl } from '../../utils/abcreativeApi';
 
 // Fallback logo — used only while loading, or if no logo has been
 // uploaded in Site Settings yet, so the header never looks broken.
-const fallbackLogo = "/assets/img/logo.png";
+const fallbackLogo = "/assets/img/port/logo.png";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);

@@ -7,7 +7,7 @@ const fallbackSection = {
     title: "Container Port Operations",
     subtitle: "Bring your container port proposals to life with 4k 3D animation.",
     image: "/assets/img/port/port-hero.jpg",
-    video_url: "", // optional — if set, it plays as the background instead of the image
+    video_url: "/assets/video/port/port-herobg.mp4", // plays as background; image is the poster
 };
 
 export default function ServiceHero({ section }) {

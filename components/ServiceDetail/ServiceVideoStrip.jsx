@@ -8,29 +8,29 @@ import { resolveSrc, getVideoEmbed } from './serviceHelpers';
 // Each item: title, image (thumbnail), video_url (mp4 upload or YouTube/Vimeo link),
 // icon (optional small round badge before the title — falls back to the red "ab" badge).
 const fallbackItems = [
-    {
+     {
         id: "v1",
-        title: "Port Operations - Port Workers",
-        image: "/assets/img/port/port-workers.jpg",
-        video_url: "/assets/img/hero-vdo.mp4",
+        title: "Port Operations - Crane Control",
+        image: "/assets/img/port/port-operations-crane-control.jpg",
+        video_url: "/assets/video/port/PortOperationsCranecontrol.mp4",
     },
     {
         id: "v2",
-        title: "Port Operations - Crane Positioning",
-        image: "/assets/img/port/crane-positioning.jpg",
-        video_url: "/assets/img/hero-vdo.mp4",
+        title: "Port Operations - Driverless Trucks",
+        image: "/assets/img/port/port-operations-driverless-trucks.jpg",
+        video_url: "/assets/video/port/PortOperationsDriverlessTrucks.mp4",
     },
     {
         id: "v3",
-        title: "Port Operations - Straddles",
-        image: "/assets/img/port/straddles.jpg",
-        video_url: "/assets/img/hero-vdo.mp4",
+        title: "Port Operations - Twistlocks",
+        image: "/assets/img/port/port-operations-twistlocks.jpg",
+        video_url: "/assets/video/port/PortOperationsTwistlocks.mp4",
     },
     {
         id: "v4",
-        title: "Port Operations - Waterside",
-        image: "/assets/img/port/waterside.jpg",
-        video_url: "/assets/img/hero-vdo.mp4",
+        title: "Port Operations - Water and Landside",
+        image: "/assets/img/port/port-operations-water-and-landside.jpg",
+        video_url: "/assets/video/port/PortOperationsWaterandLandside.mp4",
     },
 ];
 
